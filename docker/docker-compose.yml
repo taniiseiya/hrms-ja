@@ -9,17 +9,24 @@ services:
       - --skip-innodb-read-only-compressed # Temporary fix for MariaDB 10.6
     environment:
       MYSQL_ROOT_PASSWORD: 123
+      TZ: Asia/Tokyo  # JP localization
     volumes:
       - mariadb-data:/var/lib/mysql
 
   redis:
     image: redis:alpine
+    environment:
+      TZ: Asia/Tokyo  # JP localization
 
   frappe:
     image: frappe/bench:latest
     command: bash /workspace/init.sh
     environment:
       - SHELL=/bin/bash
+      - TZ=Asia/Tokyo               # JP localization
+      - LANG=ja_JP.UTF-8             # JP localization
+      - DEFAULT_CURRENCY=JPY         # JP localization
+      - DEFAULT_COUNTRY=Japan        # JP localization
     working_dir: /home/frappe
     volumes:
       - .:/workspace
