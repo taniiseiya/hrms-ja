@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>休暇申請 ｜ 勤怠ナビ</title>
+<link rel="stylesheet" href="shared/style.css">
+</head>
+<body>
+<div class="mock-banner-placeholder"></div>
+<div class="wrap">
+  <aside></aside>
+  <main>
+    <header class="page-header">
+      <h1>休暇・申請管理</h1>
+      <div class="user-placeholder"></div>
+    </header>
+
+    <div class="cards">
+      <div class="card"><div class="label">承認待ち</div><div class="value" id="cnt-pending">—</div></div>
+      <div class="card"><div class="label">承認済</div><div class="value" id="cnt-approved">—</div></div>
+      <div class="card"><div class="label">却下</div><div class="value" id="cnt-rejected">—</div></div>
+      <div class="card"><div class="label">今月の休暇日数</div><div class="value" id="cnt-days">—</div></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="openNewLeave()">＋ 新規申請</button>
+      <button class="btn btn-secondary" onclick="setFilter('all')">すべて</button>
+      <button class="btn btn-secondary" onclick="setFilter('pending')">承認待ち</button>
+      <button class="btn btn-secondary" onclick="setFilter('approved')">承認済</button>
+      <button class="btn btn-secondary" onclick="setFilter('rejected')">却下</button>
+    </div>
+
+    <div class="panel">
+      <h2>申請一覧 <span id="filter-label" style="font-weight:normal;font-size:11px;color:#64748b"></span></h2>
+      <table>
+        <thead><tr><th>申請者</th><th>種別</th><th>期間</th><th>日数</th><th>理由</th><th>状態</th><th>操作</th></tr></thead>
+        <tbody id="leave-list"></tbody>
+      </table>
+    </div>
+
+    <footer>勤怠ナビ v0.3 ｜ <a href="index.html" style="color:#94a3b8">業種選択</a></footer>
+  </main>
+</div>
+<script src="shared/app.js"></script>
+<script>
+const industry = initPage('leave.html');
+seedDataIfEmpty(industry);
+
+let filter = 'all';
+const STATUS_LABEL = { pending: '<span class="badge pending">承認待ち</span>', approved: '<span class="badge done">承認済</span>', rejected: '<span class="badge alert">却下</span>' };
+
+const LEAVE_TYPES = {
+  logistics:    ['有給', '特休', '代休', '残業申請', '欠勤'],
+  restaurant:   ['有給', '希望休', 'シフト変更', '欠勤'],
+  caregiving:   ['有給', '夜勤明け休', '特休', '研修参加', '欠勤'],
+  professional: ['有給', '半休', '特休', '研修参加', '欠勤'],
+};
+
+function setFilter(f) { filter = f; render(); }
+
+function render() {
+  const all = Store.get(industry, 'leave', []);
+  const filtered = filter === 'all' ? all : all.filter(l => l.status === filter);
+  document.querySelector('#filter-label').textContent = `表示: ${filter === 'all' ? 'すべて' : STATUS_LABEL[filter].replace(/<[^>]+>/g,'')} (${filtered.length}件)`;
+  document.querySelector('#cnt-pending').textContent = all.filter(l => l.status === 'pending').length;
+  document.querySelector('#cnt-approved').textContent = all.filter(l => l.status === 'approved').length;
+  document.querySelector('#cnt-rejected').textContent = all.filter(l => l.status === 'rejected').length;
+  document.querySelector('#cnt-days').textContent = all.filter(l => l.status === 'approved').reduce((s,l) => s + (Number(l.days)||0), 0) + '日';
+  const list = document.querySelector('#leave-list');
+  if (filtered.length === 0) {
+    list.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#94a3b8;padding:20px">該当する申請がありません</td></tr>';
+    return;
+  }
+  list.innerHTML = filtered.map(l => `
+    <tr>
+      <td><strong>${l.name}</strong></td>
+      <td><span class="badge info">${l.type}</span></td>
+      <td>${l.from}${l.from !== l.to ? ' 〜 ' + l.to : ''}</td>
+      <td>${l.days}日</td>
+      <td style="font-size:12px;color:#64748b">${l.reason || '—'}</td>
+      <td>${STATUS_LABEL[l.status] || l.status}</td>
+      <td>
+        ${l.status === 'pending' ? `
+          <button class="btn btn-sm btn-success" onclick="setStatus('${l.id}','approved')">承認</button>
+          <button class="btn btn-sm btn-danger" onclick="setStatus('${l.id}','rejected')">却下</button>
+        ` : `<button class="btn btn-sm btn-secondary" onclick="setStatus('${l.id}','pending')">差戻</button>`}
+        <button class="btn btn-sm btn-danger" onclick="removeLeave('${l.id}')">削除</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function setStatus(id, status) {
+  Store.update(industry, 'leave', id, { status });
+  toast(`✓ ${status === 'approved' ? '承認' : status === 'rejected' ? '却下' : '差戻'}しました`, 'success');
+  render();
+}
+
+function removeLeave(id) {
+  if (!confirm('この申請を削除しますか？')) return;
+  Store.remove(industry, 'leave', id);
+  toast('削除しました');
+  render();
+}
+
+function openNewLeave() {
+  const employees = Store.get(industry, 'employees', []);
+  const types = LEAVE_TYPES[industry] || LEAVE_TYPES.logistics;
+  modal(`
+    <h3>新規 休暇・申請</h3>
+    <div class="form-row">
+      <div class="form-field">
+        <label>申請者</label>
+        <select id="f-name">${employees.map(e => `<option>${e.name}</option>`).join('')}</select>
+      </div>
+      <div class="form-field">
+        <label>種別</label>
+        <select id="f-type">${types.map(t => `<option>${t}</option>`).join('')}</select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-field"><label>開始日</label><input type="date" id="f-from" value="${todayISO()}"></div>
+      <div class="form-field"><label>終了日</label><input type="date" id="f-to" value="${todayISO()}"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-field"><label>日数</label><input type="number" id="f-days" step="0.5" min="0" value="1"></div>
+      <div class="form-field"><label>初期状態</label><select id="f-status"><option value="pending">承認待ち</option><option value="approved">承認済</option></select></div>
+    </div>
+    <div class="form-row full">
+      <div class="form-field"><label>理由</label><textarea id="f-reason" rows="2"></textarea></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal()">キャンセル</button>
+      <button class="btn btn-primary" onclick="submitModal()">登録</button>
+    </div>
+  `, () => {
+    const data = {
+      name: document.querySelector('#f-name').value,
+      type: document.querySelector('#f-type').value,
+      from: document.querySelector('#f-from').value,
+      to: document.querySelector('#f-to').value,
+      days: parseFloat(document.querySelector('#f-days').value) || 1,
+      reason: document.querySelector('#f-reason').value,
+      status: document.querySelector('#f-status').value,
+    };
+    Store.add(industry, 'leave', data);
+    toast(`✓ ${data.name} さんの申請を登録しました`, 'success');
+    render();
+  });
+}
+
+render();
+</script>
+</body>
+</html>

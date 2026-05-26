@@ -60,18 +60,18 @@
     <div class="logo">勤怠ナビ<small>HRMS for Japan SMB</small></div>
     <nav>
       <div class="group">メイン</div>
-      <a href="#" class="active">📊 ダッシュボード</a>
-      <a href="#">⏰ 勤怠管理</a>
-      <a href="#">📅 シフト作成</a>
-      <a href="#">🏖 休暇申請</a>
+      <a href="logistics.html" class="active">📊 ダッシュボード</a>
+      <a href="attendance.html?industry=logistics">⏰ 勤怠管理</a>
+      <a href="shift.html?industry=logistics">📅 シフト作成</a>
+      <a href="leave.html?industry=logistics">🏖 休暇申請</a>
       <div class="group">人事</div>
-      <a href="#">👥 従業員</a>
-      <a href="#">💴 給与計算</a>
-      <a href="#">📈 評価</a>
-      <a href="#">📝 入退社</a>
+      <a href="employees.html?industry=logistics">👥 従業員</a>
+      <a href="#" style="opacity:.4">💴 給与計算 <span style="font-size:9px;background:#3b82f6;color:#fff;padding:1px 5px;border-radius:8px">近日</span></a>
+      <a href="#" style="opacity:.4">📈 評価 <span style="font-size:9px;background:#3b82f6;color:#fff;padding:1px 5px;border-radius:8px">近日</span></a>
+      <a href="#" style="opacity:.4">📝 入退社 <span style="font-size:9px;background:#3b82f6;color:#fff;padding:1px 5px;border-radius:8px">近日</span></a>
       <div class="group">設定</div>
-      <a href="#">⚙ 会社設定</a>
-      <a href="#">🇯🇵 祝日カレンダー</a>
+      <a href="#" style="opacity:.4">⚙ 会社設定 <span style="font-size:9px;background:#3b82f6;color:#fff;padding:1px 5px;border-radius:8px">近日</span></a>
+      <a href="#" style="opacity:.4">🇯🇵 祝日カレンダー <span style="font-size:9px;background:#3b82f6;color:#fff;padding:1px 5px;border-radius:8px">近日</span></a>
     </nav>
   </aside>
   <main>
@@ -110,7 +110,7 @@
 
     <div class="panels">
       <div class="panel">
-        <h2>本日の打刻状況 <a href="#">すべて見る →</a></h2>
+        <h2>本日の打刻状況 <a href="attendance.html?industry=logistics">すべて見る →</a></h2>
         <table>
           <thead>
             <tr><th>従業員</th><th>部署</th><th>出勤</th><th>退勤</th><th>状態</th></tr>
@@ -128,7 +128,7 @@
       </div>
 
       <div class="panel">
-        <h2>承認待ち <a href="#">すべて →</a></h2>
+        <h2>承認待ち <a href="leave.html?industry=logistics">すべて →</a></h2>
         <table>
           <tbody>
             <tr><td><strong>有給申請</strong><br><small style="color:#64748b">佐藤健太 ／ 6/3-6/5</small></td><td><span class="badge pending">承認待</span></td></tr>
@@ -141,7 +141,7 @@
     </div>
 
     <div class="panel">
-      <h2>今週のシフト表（配送1課） <a href="#">編集 →</a></h2>
+      <h2>今週のシフト表（配送1課） <a href="shift.html?industry=logistics">編集 →</a></h2>
       <div class="shift-grid">
         <div class="hd"></div>
         <div class="hd">月 5/25</div><div class="hd">火 5/26</div><div class="hd">水 5/27</div><div class="hd">木 5/28</div><div class="hd">金 5/29</div><div class="hd" style="color:#3b82f6">土 5/30</div><div class="hd" style="color:#dc2626">日 5/31</div>

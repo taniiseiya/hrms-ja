@@ -63,18 +63,19 @@
     <div class="logo">士業ナビ<small>For Professional Office</small></div>
     <nav>
       <div class="group">業務</div>
-      <a href="#" class="active">📊 ダッシュボード</a>
-      <a href="#">⏱ 工数入力（タイムチャージ）</a>
-      <a href="#">📁 案件管理</a>
-      <a href="#">🏢 顧問先管理</a>
-      <div class="group">期限・予定</div>
-      <a href="#">⚠ 期日カレンダー</a>
-      <a href="#">📝 申請・申告</a>
+      <a href="professional.html" class="active">📊 ダッシュボード</a>
+      <a href="attendance.html?industry=professional">⏱ 工数（タイムチャージ）</a>
+      <a href="shift.html?industry=professional">📅 シフト作成</a>
+      <a href="leave.html?industry=professional">🏖 休暇申請</a>
       <div class="group">所員</div>
-      <a href="#">👥 所員一覧</a>
-      <a href="#">💴 給与計算</a>
-      <a href="#">📈 稼働率分析</a>
-      <a href="#">⚙ 設定</a>
+      <a href="employees.html?industry=professional">👥 所員一覧</a>
+      <a href="#" style="opacity:.4">📁 案件管理 <span style="font-size:9px;background:#a8a29e;color:#fff;padding:1px 5px;border-radius:8px">近日</span></a>
+      <a href="#" style="opacity:.4">🏢 顧問先管理 <span style="font-size:9px;background:#a8a29e;color:#fff;padding:1px 5px;border-radius:8px">近日</span></a>
+      <a href="#" style="opacity:.4">📈 稼働率分析 <span style="font-size:9px;background:#a8a29e;color:#fff;padding:1px 5px;border-radius:8px">近日</span></a>
+      <div class="group">期限・予定</div>
+      <a href="#" style="opacity:.4">⚠ 期日カレンダー <span style="font-size:9px;background:#a8a29e;color:#fff;padding:1px 5px;border-radius:8px">近日</span></a>
+      <a href="#" style="opacity:.4">💴 給与計算 <span style="font-size:9px;background:#a8a29e;color:#fff;padding:1px 5px;border-radius:8px">近日</span></a>
+      <a href="#" style="opacity:.4">⚙ 設定 <span style="font-size:9px;background:#a8a29e;color:#fff;padding:1px 5px;border-radius:8px">近日</span></a>
     </nav>
   </aside>
   <main>
@@ -111,7 +112,7 @@
 
     <div class="panels">
       <div class="panel">
-        <h2>所員別 稼働状況（今月） <a href="#">詳細 →</a></h2>
+        <h2>所員別 稼働状況（今月） <a href="attendance.html?industry=professional">詳細 →</a></h2>
         <table>
           <thead>
             <tr><th>所員</th><th>役職</th><th>工数</th><th>稼働率内訳（請求／事務／空）</th></tr>
@@ -182,7 +183,7 @@
       </div>
 
       <div class="panel">
-        <h2>主要顧問先（売上TOP5） <a href="#">→</a></h2>
+        <h2>主要顧問先（売上TOP5） <a href="employees.html?industry=professional">→</a></h2>
         <table>
           <tbody>
             <tr><td><strong>株式会社○○運輸</strong><br><small style="color:#78716c">月額¥120k / 給与計算+労務</small></td><td><span class="badge done">継続</span></td></tr>
@@ -196,7 +197,7 @@
     </div>
 
     <div class="panel">
-      <h2>期日管理（直近2週間） <a href="#">カレンダー →</a></h2>
+      <h2>期日管理（直近2週間） <a href="leave.html?industry=professional">カレンダー →</a></h2>
       <div class="deadline-row urgent">
         <strong>⚠ 算定基礎届 一括提出</strong>
         <small>顧問先 全47社 ／ 期限: 2026/05/31（あと6日） ／ 担当: 佐藤・鈴木</small>

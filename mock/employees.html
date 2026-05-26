@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>従業員管理 ｜ 勤怠ナビ</title>
+<link rel="stylesheet" href="shared/style.css">
+</head>
+<body>
+<div class="mock-banner-placeholder"></div>
+<div class="wrap">
+  <aside></aside>
+  <main>
+    <header class="page-header">
+      <h1>従業員管理</h1>
+      <div class="user-placeholder"></div>
+    </header>
+
+    <div class="cards">
+      <div class="card"><div class="label">在籍数</div><div class="value" id="cnt-total">—</div></div>
+      <div class="card"><div class="label">部署数</div><div class="value" id="cnt-dept">—</div></div>
+      <div class="card"><div class="label">今年の新入社</div><div class="value" id="cnt-new">—</div></div>
+      <div class="card"><div class="label">平均勤続年数</div><div class="value" id="cnt-tenure">—</div></div>
+    </div>
+
+    <div class="search-bar">
+      <input type="text" id="search" placeholder="名前・部署・役職で検索..." oninput="render()">
+      <select id="filter-dept" onchange="render()"><option value="">全部署</option></select>
+      <button class="btn btn-primary" onclick="openNew()">＋ 従業員追加</button>
+    </div>
+
+    <div class="panel">
+      <h2>従業員一覧 <span id="cnt-shown" style="font-weight:normal;font-size:11px;color:#64748b"></span></h2>
+      <table>
+        <thead><tr><th onclick="sortBy('name')" style="cursor:pointer">氏名 ↕</th><th onclick="sortBy('dept')" style="cursor:pointer">部署 ↕</th><th onclick="sortBy('role')" style="cursor:pointer">役職 ↕</th><th onclick="sortBy('joinDate')" style="cursor:pointer">入社日 ↕</th><th>勤続</th><th>操作</th></tr></thead>
+        <tbody id="emp-list"></tbody>
+      </table>
+    </div>
+
+    <footer>勤怠ナビ v0.3 ｜ <a href="index.html" style="color:#94a3b8">業種選択</a></footer>
+  </main>
+</div>
+<script src="shared/app.js"></script>
+<script>
+const industry = initPage('employees.html');
+seedDataIfEmpty(industry);
+
+let sortKey = 'name', sortAsc = true;
+
+function sortBy(k) { if (sortKey === k) sortAsc = !sortAsc; else { sortKey = k; sortAsc = true; } render(); }
+
+function tenure(joinDate) {
+  const days = (new Date() - new Date(joinDate)) / 86400000;
+  const y = Math.floor(days / 365), m = Math.floor((days % 365) / 30);
+  return y > 0 ? `${y}年${m}ヶ月` : `${m}ヶ月`;
+}
+
+function render() {
+  const all = Store.get(industry, 'employees', []);
+  const departments = [...new Set(all.map(e => e.dept))];
+  const sel = document.querySelector('#filter-dept');
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">全部署</option>' + departments.map(d => `<option ${d===cur?'selected':''}>${d}</option>`).join('');
+
+  const q = document.querySelector('#search').value.toLowerCase();
+  const dept = sel.value;
+  let filtered = all.filter(e =>
+    (!dept || e.dept === dept) &&
+    (!q || e.name.toLowerCase().includes(q) || e.dept.toLowerCase().includes(q) || e.role.toLowerCase().includes(q))
+  );
+  filtered.sort((a,b) => (a[sortKey] > b[sortKey] ? 1 : -1) * (sortAsc ? 1 : -1));
+
+  document.querySelector('#cnt-total').textContent = all.length + '名';
+  document.querySelector('#cnt-dept').textContent = departments.length;
+  const thisYear = new Date().getFullYear();
+  document.querySelector('#cnt-new').textContent = all.filter(e => new Date(e.joinDate).getFullYear() === thisYear).length + '名';
+  const avgDays = all.reduce((s,e) => s + ((new Date() - new Date(e.joinDate)) / 86400000), 0) / (all.length || 1);
+  document.querySelector('#cnt-tenure').textContent = (avgDays / 365).toFixed(1) + '年';
+  document.querySelector('#cnt-shown').textContent = `（${filtered.length} / ${all.length}名）`;
+
+  const list = document.querySelector('#emp-list');
+  if (filtered.length === 0) { list.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#94a3b8;padding:20px">該当する従業員がいません</td></tr>'; return; }
+  list.innerHTML = filtered.map(e => `
+    <tr>
+      <td><strong>${e.name}</strong></td>
+      <td><span class="badge info">${e.dept}</span></td>
+      <td>${e.role}</td>
+      <td>${e.joinDate}</td>
+      <td>${tenure(e.joinDate)}</td>
+      <td>
+        <button class="btn btn-sm btn-secondary" onclick="openEdit('${e.id}')">編集</button>
+        <button class="btn btn-sm btn-danger" onclick="removeEmp('${e.id}')">削除</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function openNew() {
+  modal(`
+    <h3>新規 従業員登録</h3>
+    <div class="form-row">
+      <div class="form-field"><label>氏名</label><input id="f-name" placeholder="山田 太郎"></div>
+      <div class="form-field"><label>部署</label><input id="f-dept" placeholder="配送1課"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-field"><label>役職</label><input id="f-role" placeholder="ドライバー"></div>
+      <div class="form-field"><label>入社日</label><input type="date" id="f-join" value="${todayISO()}"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal()">キャンセル</button>
+      <button class="btn btn-primary" onclick="submitModal()">登録</button>
+    </div>
+  `, () => {
+    const name = document.querySelector('#f-name').value.trim();
+    if (!name) { toast('氏名は必須です', 'error'); return; }
+    Store.add(industry, 'employees', {
+      name,
+      dept: document.querySelector('#f-dept').value || '未配属',
+      role: document.querySelector('#f-role').value || '一般',
+      joinDate: document.querySelector('#f-join').value,
+    });
+    toast(`✓ ${name} さんを登録しました`, 'success');
+    render();
+  });
+}
+
+function openEdit(id) {
+  const e = Store.get(industry, 'employees', []).find(x => x.id === id);
+  if (!e) return;
+  modal(`
+    <h3>従業員情報 編集</h3>
+    <div class="form-row">
+      <div class="form-field"><label>氏名</label><input id="f-name" value="${e.name}"></div>
+      <div class="form-field"><label>部署</label><input id="f-dept" value="${e.dept}"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-field"><label>役職</label><input id="f-role" value="${e.role}"></div>
+      <div class="form-field"><label>入社日</label><input type="date" id="f-join" value="${e.joinDate}"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal()">キャンセル</button>
+      <button class="btn btn-primary" onclick="submitModal()">保存</button>
+    </div>
+  `, () => {
+    Store.update(industry, 'employees', id, {
+      name: document.querySelector('#f-name').value,
+      dept: document.querySelector('#f-dept').value,
+      role: document.querySelector('#f-role').value,
+      joinDate: document.querySelector('#f-join').value,
+    });
+    toast('✓ 更新しました', 'success');
+    render();
+  });
+}
+
+function removeEmp(id) {
+  const e = Store.get(industry, 'employees', []).find(x => x.id === id);
+  if (!confirm(`${e?.name || ''} さんを削除しますか？`)) return;
+  Store.remove(industry, 'employees', id);
+  toast('削除しました');
+  render();
+}
+
+render();
+</script>
+</body>
+</html>

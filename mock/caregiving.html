@@ -66,18 +66,19 @@
     <div class="logo">ケアナビ<small>For Care Facility</small></div>
     <nav>
       <div class="group">運営</div>
-      <a href="#" class="active">🏥 施設ダッシュボード</a>
-      <a href="#">⏰ 打刻・勤怠</a>
-      <a href="#">📅 シフト作成（配置基準対応）</a>
-      <a href="#">🛌 夜勤管理</a>
+      <a href="caregiving.html" class="active">🏥 施設ダッシュボード</a>
+      <a href="attendance.html?industry=caregiving">⏰ 打刻・勤怠</a>
+      <a href="shift.html?industry=caregiving">📅 シフト（配置基準対応）</a>
+      <a href="leave.html?industry=caregiving">🏖 休暇・夜勤明け申請</a>
       <div class="group">スタッフ</div>
-      <a href="#">👥 職員一覧</a>
-      <a href="#">🎓 資格・研修管理</a>
-      <a href="#">💴 給与計算（処遇改善加算）</a>
+      <a href="employees.html?industry=caregiving">👥 職員一覧</a>
+      <a href="#" style="opacity:.4">🛌 夜勤管理 <span style="font-size:9px;background:#34d399;color:#fff;padding:1px 5px;border-radius:8px">近日</span></a>
+      <a href="#" style="opacity:.4">🎓 資格・研修管理 <span style="font-size:9px;background:#34d399;color:#fff;padding:1px 5px;border-radius:8px">近日</span></a>
+      <a href="#" style="opacity:.4">💴 給与（処遇改善加算） <span style="font-size:9px;background:#34d399;color:#fff;padding:1px 5px;border-radius:8px">近日</span></a>
       <div class="group">ケア</div>
-      <a href="#">👴 利用者管理</a>
-      <a href="#">📝 ケア記録連携</a>
-      <a href="#">⚙ 加算設定</a>
+      <a href="#" style="opacity:.4">👴 利用者管理 <span style="font-size:9px;background:#34d399;color:#fff;padding:1px 5px;border-radius:8px">近日</span></a>
+      <a href="#" style="opacity:.4">📝 ケア記録連携 <span style="font-size:9px;background:#34d399;color:#fff;padding:1px 5px;border-radius:8px">近日</span></a>
+      <a href="#" style="opacity:.4">⚙ 加算設定 <span style="font-size:9px;background:#34d399;color:#fff;padding:1px 5px;border-radius:8px">近日</span></a>
     </nav>
   </aside>
   <main>
@@ -122,7 +123,7 @@
 
     <div class="panels">
       <div class="panel">
-        <h2>本日の勤務職員 <a href="#">すべて →</a></h2>
+        <h2>本日の勤務職員 <a href="attendance.html?industry=caregiving">すべて →</a></h2>
         <table>
           <thead>
             <tr><th>職員</th><th>資格</th><th>勤務帯</th><th>打刻</th><th>状態</th></tr>
@@ -140,7 +141,7 @@
       </div>
 
       <div class="panel">
-        <h2>資格・期限管理 <a href="#">→</a></h2>
+        <h2>資格・期限管理 <a href="employees.html?industry=caregiving">→</a></h2>
         <table>
           <tbody>
             <tr><td><strong>介護福祉士</strong><br><small style="color:#047857">15名 / 全24名</small></td><td><span class="badge ok">62.5%</span></td></tr>
@@ -154,7 +155,7 @@
     </div>
 
     <div class="panel">
-      <h2>今週のシフト表（特養ユニット1） <a href="#">編集 →</a></h2>
+      <h2>今週のシフト表（特養ユニット1） <a href="shift.html?industry=caregiving">編集 →</a></h2>
       <div class="shift-grid">
         <div class="hd"></div>
         <div class="hd">月 5/25</div><div class="hd">火 5/26</div><div class="hd">水 5/27</div><div class="hd">木 5/28</div><div class="hd">金 5/29</div><div class="hd" style="color:#3b82f6">土 5/30</div><div class="hd" style="color:#dc2626">日 5/31</div>

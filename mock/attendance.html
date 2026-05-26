@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>勤怠管理 ｜ 勤怠ナビ</title>
+<link rel="stylesheet" href="shared/style.css">
+</head>
+<body>
+<div class="mock-banner-placeholder"></div>
+<div class="wrap">
+  <aside></aside>
+  <main>
+    <header class="page-header">
+      <h1>勤怠管理・打刻</h1>
+      <div class="user-placeholder"></div>
+    </header>
+
+    <div class="punch-now" id="clock">--:--</div>
+
+    <div class="punch-area">
+      <button class="punch-btn" onclick="punch('出勤')"><div class="icon">🏃</div><div class="label">出勤</div><div class="desc">勤務開始を記録</div></button>
+      <button class="punch-btn" onclick="punch('休憩開始')"><div class="icon">☕</div><div class="label">休憩開始</div><div class="desc">休憩入り</div></button>
+      <button class="punch-btn" onclick="punch('休憩終了')"><div class="icon">▶</div><div class="label">休憩終了</div><div class="desc">業務再開</div></button>
+      <button class="punch-btn" onclick="punch('退勤')"><div class="icon">🏠</div><div class="label">退勤</div><div class="desc">勤務終了</div></button>
+    </div>
+
+    <div class="panel">
+      <h2>本日（<span id="today-date"></span>）の打刻履歴 <button class="link" onclick="clearToday()">本日分クリア</button></h2>
+      <table>
+        <thead><tr><th>時刻</th><th>種別</th><th>担当者</th><th>備考</th><th></th></tr></thead>
+        <tbody id="punch-list"></tbody>
+      </table>
+    </div>
+
+    <div class="panel">
+      <h2>過去7日間の集計</h2>
+      <table>
+        <thead><tr><th>日付</th><th>出勤</th><th>退勤</th><th>休憩</th><th>実働</th><th>状態</th></tr></thead>
+        <tbody id="summary-list"></tbody>
+      </table>
+    </div>
+
+    <footer>勤怠ナビ v0.3 ｜ <a href="index.html" style="color:#94a3b8">業種選択</a></footer>
+  </main>
+</div>
+<script src="shared/app.js"></script>
+<script>
+const industry = initPage('attendance.html');
+seedDataIfEmpty(industry);
+
+document.querySelector('#today-date').textContent = todayISO();
+setInterval(() => { document.querySelector('#clock').textContent = nowHM() + ':' + String(new Date().getSeconds()).padStart(2,'0'); }, 1000);
+
+function getUserName() {
+  return { logistics: '谷井 誠也', restaurant: '鈴木 店長', caregiving: '山下 施設長', professional: '谷井 所長' }[industry];
+}
+
+function punch(kind) {
+  Store.add(industry, 'attendance', { kind, at: new Date().toISOString(), by: getUserName(), date: todayISO() });
+  toast(`✓ ${kind} を ${nowHM()} に記録しました`, 'success');
+  renderPunches();
+}
+
+function renderPunches() {
+  const all = Store.get(industry, 'attendance', []);
+  const today = todayISO();
+  const todays = all.filter(p => p.date === today).sort((a,b) => a.at.localeCompare(b.at));
+  const list = document.querySelector('#punch-list');
+  if (todays.length === 0) {
+    list.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#94a3b8;padding:20px">まだ打刻がありません。上のボタンを押してください。</td></tr>';
+  } else {
+    list.innerHTML = todays.map(p => `
+      <tr>
+        <td><strong>${fmtTime(p.at)}</strong></td>
+        <td><span class="badge ${p.kind==='出勤'?'ok':p.kind==='退勤'?'info':'pending'}">${p.kind}</span></td>
+        <td>${p.by}</td>
+        <td>${p.kind==='出勤' && fmtTime(p.at) > '09:00' ? '<span class="badge late">遅刻</span>' : ''}</td>
+        <td><button class="btn btn-sm btn-danger" onclick="removePunch('${p.id}')">削除</button></td>
+      </tr>
+    `).join('');
+  }
+  renderSummary();
+}
+
+function removePunch(id) {
+  if (!confirm('この打刻を削除しますか？')) return;
+  Store.remove(industry, 'attendance', id);
+  toast('削除しました');
+  renderPunches();
+}
+
+function clearToday() {
+  if (!confirm('本日の打刻を全て削除しますか？')) return;
+  const all = Store.get(industry, 'attendance', []);
+  Store.set(industry, 'attendance', all.filter(p => p.date !== todayISO()));
+  toast('本日の打刻をクリアしました');
+  renderPunches();
+}
+
+function renderSummary() {
+  const all = Store.get(industry, 'attendance', []);
+  const days = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    days.push(fmtDate(d));
+  }
+  const rows = days.map(date => {
+    const p = all.filter(x => x.date === date).sort((a,b) => a.at.localeCompare(b.at));
+    const inT = p.find(x => x.kind === '出勤');
+    const outT = p.filter(x => x.kind === '退勤').pop();
+    const breakStart = p.find(x => x.kind === '休憩開始');
+    const breakEnd = p.find(x => x.kind === '休憩終了');
+    let work = '—', status = '<span class="badge off">—</span>';
+    if (inT && outT) {
+      const ms = new Date(outT.at) - new Date(inT.at);
+      let breakMs = 0;
+      if (breakStart && breakEnd) breakMs = new Date(breakEnd.at) - new Date(breakStart.at);
+      const h = ((ms - breakMs) / 3600000).toFixed(2);
+      work = `${h}h`;
+      status = '<span class="badge ok">完了</span>';
+    } else if (inT) {
+      status = '<span class="badge pending">勤務中</span>';
+    } else if (date === todayISO()) {
+      status = '<span class="badge warn">未打刻</span>';
+    }
+    return `<tr><td>${date}</td><td>${inT ? fmtTime(inT.at) : '—'}</td><td>${outT ? fmtTime(outT.at) : '—'}</td>
+      <td>${breakStart && breakEnd ? `${fmtTime(breakStart.at)}〜${fmtTime(breakEnd.at)}` : '—'}</td>
+      <td>${work}</td><td>${status}</td></tr>`;
+  }).join('');
+  document.querySelector('#summary-list').innerHTML = rows;
+}
+
+renderPunches();
+</script>
+</body>
+</html>

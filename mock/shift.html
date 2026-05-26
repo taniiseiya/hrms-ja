@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>シフト作成 ｜ 勤怠ナビ</title>
+<link rel="stylesheet" href="shared/style.css">
+</head>
+<body>
+<div class="mock-banner-placeholder"></div>
+<div class="wrap">
+  <aside></aside>
+  <main>
+    <header class="page-header">
+      <h1>シフト作成・編集</h1>
+      <div class="user-placeholder"></div>
+    </header>
+
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="prevWeek()">← 前週</button>
+      <button class="btn btn-secondary" onclick="thisWeek()">今週</button>
+      <button class="btn btn-secondary" onclick="nextWeek()">翌週 →</button>
+      <span style="flex:1"></span>
+      <button class="btn btn-success" onclick="autoFill()">🪄 自動割当</button>
+      <button class="btn btn-danger" onclick="clearWeek()">クリア</button>
+      <button class="btn btn-primary" onclick="exportCSV()">CSV出力</button>
+    </div>
+
+    <div class="note info" id="week-label"></div>
+
+    <div class="panel">
+      <h2>シフト編集 <span style="font-weight:normal;color:#64748b;font-size:11px">クリックでローテーション切替: 空→早→中→遅→夜→明→公休→空</span></h2>
+      <div id="shift-container"></div>
+    </div>
+
+    <div class="panel">
+      <h2>勤務種別の凡例</h2>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        <span class="badge sh-early">早 (6-15)</span>
+        <span class="badge sh-mid">中 (9-18 / 中)</span>
+        <span class="badge sh-late">遅 (15-24 / 遅番)</span>
+        <span class="badge sh-night">夜 (22-翌7 / 夜勤)</span>
+        <span class="badge sh-ake">明 (夜勤明け休)</span>
+        <span class="badge off">公休</span>
+      </div>
+    </div>
+
+    <footer>勤怠ナビ v0.3 ｜ <a href="index.html" style="color:#94a3b8">業種選択</a></footer>
+  </main>
+</div>
+<script src="shared/app.js"></script>
+<script>
+const industry = initPage('shift.html');
+seedDataIfEmpty(industry);
+
+const SHIFT_CYCLE = ['', '早', '中', '遅', '夜', '明', '休'];
+const SHIFT_CLASS = { '': 'sh-off', '早': 'sh-early', '中': 'sh-mid', '遅': 'sh-late', '夜': 'sh-night', '明': 'sh-ake', '休': 'sh-off' };
+const SHIFT_LABEL = { '': '—', '早': '早 6-15', '中': '中 9-18', '遅': '遅 15-24', '夜': '夜 22-7', '明': '明け休', '休': '公休' };
+
+let baseDate = new Date();
+baseDate.setHours(0,0,0,0);
+function weekStart(d) { const x = new Date(d); x.setDate(x.getDate() - x.getDay() + 1); return x; }
+
+function getWeekDates() {
+  const start = weekStart(baseDate);
+  return [...Array(7)].map((_, i) => { const d = new Date(start); d.setDate(d.getDate() + i); return d; });
+}
+
+function render() {
+  const dates = getWeekDates();
+  document.querySelector('#week-label').textContent =
+    `表示中: ${fmtDate(dates[0])}（月）〜 ${fmtDate(dates[6])}（日）`;
+  const employees = Store.get(industry, 'employees', []).slice(0, 6);
+  const shifts = Store.get(industry, 'shifts', {});
+  const dayLabels = ['月','火','水','木','金','土','日'];
+  let html = '<div class="shift-grid">';
+  html += '<div class="hd"></div>';
+  dates.forEach((d, i) => {
+    const cls = i === 5 ? 'style="color:#3b82f6"' : i === 6 ? 'style="color:#dc2626"' : '';
+    html += `<div class="hd" ${cls}>${dayLabels[i]} ${d.getMonth()+1}/${d.getDate()}</div>`;
+  });
+  employees.forEach(emp => {
+    html += `<div class="name">${emp.name}<br><small style="color:#64748b;font-weight:400">${emp.dept}</small></div>`;
+    dates.forEach(d => {
+      const key = `${fmtDate(d)}|${emp.id}`;
+      const val = shifts[key] || '';
+      html += `<div class="shift-cell ${SHIFT_CLASS[val]}" onclick="cycle('${key}')" data-key="${key}">${SHIFT_LABEL[val]}</div>`;
+    });
+  });
+  html += '</div>';
+  document.querySelector('#shift-container').innerHTML = html;
+}
+
+function cycle(key) {
+  const shifts = Store.get(industry, 'shifts', {});
+  const cur = shifts[key] || '';
+  const idx = SHIFT_CYCLE.indexOf(cur);
+  const next = SHIFT_CYCLE[(idx + 1) % SHIFT_CYCLE.length];
+  if (next === '') delete shifts[key]; else shifts[key] = next;
+  Store.set(industry, 'shifts', shifts);
+  render();
+}
+
+function prevWeek() { baseDate.setDate(baseDate.getDate() - 7); render(); }
+function nextWeek() { baseDate.setDate(baseDate.getDate() + 7); render(); }
+function thisWeek() { baseDate = new Date(); baseDate.setHours(0,0,0,0); render(); }
+
+function autoFill() {
+  if (!confirm('今週のシフトを自動割当します（既存は上書き）。よろしいですか？')) return;
+  const dates = getWeekDates();
+  const employees = Store.get(industry, 'employees', []).slice(0, 6);
+  const shifts = Store.get(industry, 'shifts', {});
+  const patterns = industry === 'caregiving'
+    ? ['早','中','夜','明','休','遅','中']
+    : industry === 'restaurant'
+    ? ['中','中','遅','休','遅','遅','中']
+    : ['早','中','中','遅','早','休','休'];
+  employees.forEach((emp, ei) => {
+    dates.forEach((d, di) => {
+      const key = `${fmtDate(d)}|${emp.id}`;
+      shifts[key] = patterns[(ei + di) % 7];
+    });
+  });
+  Store.set(industry, 'shifts', shifts);
+  toast('🪄 自動割当しました');
+  render();
+}
+
+function clearWeek() {
+  if (!confirm('今週のシフトをすべて削除しますか？')) return;
+  const dates = getWeekDates().map(fmtDate);
+  const shifts = Store.get(industry, 'shifts', {});
+  Object.keys(shifts).forEach(k => { if (dates.includes(k.split('|')[0])) delete shifts[k]; });
+  Store.set(industry, 'shifts', shifts);
+  toast('クリアしました');
+  render();
+}
+
+function exportCSV() {
+  const dates = getWeekDates();
+  const employees = Store.get(industry, 'employees', []).slice(0, 6);
+  const shifts = Store.get(industry, 'shifts', {});
+  let csv = '﻿従業員,部署,' + dates.map(fmtDate).join(',') + '\n';
+  employees.forEach(emp => {
+    csv += `${emp.name},${emp.dept},` + dates.map(d => shifts[`${fmtDate(d)}|${emp.id}`] || '').join(',') + '\n';
+  });
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `shift_${fmtDate(dates[0])}.csv`; a.click();
+  URL.revokeObjectURL(url);
+  toast('📥 CSV ダウンロードしました', 'success');
+}
+
+render();
+</script>
+</body>
+</html>

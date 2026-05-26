@@ -129,17 +129,24 @@
   </div>
 
   <div class="info">
-    <h3>📖 提案時の使い方</h3>
+    <h3>✨ v0.3 動作機能（90%デモ）</h3>
     <ul>
-      <li>顧客の業種に合わせたタブを開いて画面共有 or スクショで提案書に貼り付け</li>
-      <li>「これをお客様の会社名・店舗名・スタッフ名に置き換えた本番版を構築します」と提案</li>
-      <li>本番化は Frappe HRMS (GPL v3) ベース + 業種別カスタマイズで構築</li>
-      <li>ローカル起動: <code>python3 -m http.server 8080 --directory mock</code></li>
+      <li><strong>打刻</strong> — 出勤/休憩/退勤ボタンが localStorage に保存（リロードしても残る）</li>
+      <li><strong>シフト編集</strong> — グリッドをクリックで早→中→遅→夜→明→休→空をローテーション、CSV出力、自動割当ボタン</li>
+      <li><strong>休暇申請</strong> — 新規申請フォーム、承認/却下/差戻、ステータス絞込</li>
+      <li><strong>従業員管理</strong> — 検索・部署絞込・列ソート・追加・編集・削除</li>
+      <li><strong>業種テーマ自動切替</strong> — ?industry=xxx で色・データ・名称が変わる</li>
+    </ul>
+    <h3 style="margin-top:16px">📖 提案時の使い方</h3>
+    <ul>
+      <li>顧客の業種カードを開き、サイドバーの「勤怠」「シフト」「休暇」「従業員」を実際に触ってもらう</li>
+      <li>「お客様のスタッフ名で本番構築します」と提案 → 初期費用 + 月額保守 で契約</li>
+      <li>データクリア: ブラウザの DevTools → Application → Local Storage → 削除</li>
     </ul>
   </div>
 
   <footer>
-    勤怠ナビ v0.2 ｜ 4業種テンプレ ｜ <a href="https://github.com/taniiseiya/hrms-ja">taniiseiya/hrms-ja</a>
+    勤怠ナビ v0.3 ｜ 4業種 × 5機能ページ ｜ <a href="https://github.com/taniiseiya/hrms-ja">taniiseiya/hrms-ja</a>
   </footer>
 </div>
 </body>
