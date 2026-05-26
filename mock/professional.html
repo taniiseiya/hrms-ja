@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>士業ナビ ｜ 社労士・税理士事務所向け業務管理システム</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-font-smoothing:antialiased}
+  body{font-family:"Hiragino Mincho ProN","Yu Mincho","Hiragino Sans","Yu Gothic UI",serif;background:#fafaf5;color:#1c1917;font-size:14px;line-height:1.6}
+  .wrap{display:grid;grid-template-columns:240px 1fr;min-height:100vh;padding-top:30px}
+  aside{background:#1c1917;color:#d6d3d1;padding:24px 0;font-family:"Hiragino Sans","Yu Gothic UI",sans-serif}
+  .logo{padding:0 24px 24px;border-bottom:1px solid #292524;font-weight:700;font-size:18px;color:#fff;letter-spacing:.02em}
+  .logo small{display:block;font-size:11px;font-weight:400;color:#a8a29e;margin-top:2px}
+  nav{padding:16px 0}
+  nav a{display:block;padding:10px 24px;color:#d6d3d1;text-decoration:none;font-size:13px;border-left:3px solid transparent}
+  nav a:hover{background:#292524;color:#fff}
+  nav a.active{background:#292524;color:#fff;border-left-color:#a8a29e}
+  nav .group{padding:16px 24px 6px;font-size:10px;color:#a8a29e;letter-spacing:.1em;text-transform:uppercase}
+  main{padding:24px 32px;overflow-x:hidden;font-family:"Hiragino Sans","Yu Gothic UI",sans-serif}
+  header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;padding-bottom:16px;border-bottom:2px solid #1c1917}
+  h1{font-size:22px;font-weight:700;color:#1c1917;font-family:"Hiragino Mincho ProN","Yu Mincho",serif}
+  .user{display:flex;align-items:center;gap:12px;font-size:13px}
+  .avatar{width:36px;height:36px;border-radius:4px;background:#1c1917;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600}
+  .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+  .card{background:#fff;border:1px solid #d6d3d1;border-radius:2px;padding:18px;border-left:3px solid #1c1917}
+  .card .label{color:#78716c;font-size:12px;margin-bottom:6px}
+  .card .value{font-size:24px;font-weight:700;color:#1c1917}
+  .card .delta{font-size:11px;margin-top:4px}
+  .delta.up{color:#15803d}.delta.down{color:#b91c1c}
+  .panels{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:24px}
+  .panel{background:#fff;border:1px solid #d6d3d1;border-radius:2px;padding:20px}
+  .panel h2{font-size:14px;font-weight:600;margin-bottom:16px;color:#1c1917;display:flex;justify-content:space-between;align-items:center;padding-bottom:8px;border-bottom:1px solid #e7e5e4}
+  .panel h2 a{font-size:11px;color:#78716c;text-decoration:none;font-weight:400}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{text-align:left;color:#78716c;font-weight:500;font-size:11px;padding:8px 8px 8px 0;border-bottom:1px solid #d6d3d1;text-transform:uppercase;letter-spacing:.05em}
+  td{padding:10px 8px 10px 0;border-bottom:1px solid #f5f5f4}
+  tr:last-child td{border-bottom:none}
+  .badge{display:inline-block;padding:2px 8px;border-radius:2px;font-size:11px;font-weight:500}
+  .badge.shi{background:#1c1917;color:#fff}
+  .badge.staff{background:#e7e5e4;color:#44403c}
+  .badge.urgent{background:#fecaca;color:#991b1b}
+  .badge.high{background:#fed7aa;color:#9a3412}
+  .badge.normal{background:#dbeafe;color:#1e40af}
+  .badge.done{background:#dcfce7;color:#166534}
+  .util-bar{display:flex;height:24px;border-radius:2px;overflow:hidden;border:1px solid #d6d3d1;font-size:10px;color:#fff}
+  .util-bar div{display:flex;align-items:center;justify-content:center;padding:0 4px}
+  .util-chargable{background:#1c1917}
+  .util-admin{background:#78716c}
+  .util-free{background:#e7e5e4;color:#44403c}
+  .deadline-row{padding:10px;margin-bottom:6px;border-radius:2px;background:#fafaf5;border-left:3px solid #d6d3d1;font-size:12px}
+  .deadline-row.urgent{border-left-color:#dc2626;background:#fef2f2}
+  .deadline-row.warn{border-left-color:#f59e0b;background:#fffbeb}
+  .deadline-row strong{display:block;color:#1c1917;font-size:13px;margin-bottom:2px}
+  .deadline-row small{color:#78716c}
+  footer{margin-top:32px;padding-top:16px;border-top:2px solid #1c1917;color:#a8a29e;font-size:11px;text-align:center;font-family:"Hiragino Mincho ProN",serif}
+  .mock-banner{position:fixed;top:0;left:0;right:0;background:#1c1917;color:#fbbf24;text-align:center;padding:6px;font-size:11px;z-index:100;letter-spacing:.05em;font-family:"Hiragino Sans",sans-serif}
+</style>
+</head>
+<body>
+<div class="mock-banner">⚠ 営業デモ用モック ｜ 士業事務所版 ｜ <a href="index.html" style="color:#fbbf24">業種選択へ戻る</a></div>
+<div class="wrap">
+  <aside>
+    <div class="logo">士業ナビ<small>For Professional Office</small></div>
+    <nav>
+      <div class="group">業務</div>
+      <a href="#" class="active">📊 ダッシュボード</a>
+      <a href="#">⏱ 工数入力（タイムチャージ）</a>
+      <a href="#">📁 案件管理</a>
+      <a href="#">🏢 顧問先管理</a>
+      <div class="group">期限・予定</div>
+      <a href="#">⚠ 期日カレンダー</a>
+      <a href="#">📝 申請・申告</a>
+      <div class="group">所員</div>
+      <a href="#">👥 所員一覧</a>
+      <a href="#">💴 給与計算</a>
+      <a href="#">📈 稼働率分析</a>
+      <a href="#">⚙ 設定</a>
+    </nav>
+  </aside>
+  <main>
+    <header>
+      <h1>谷井 社会保険労務士事務所</h1>
+      <div class="user">
+        <span>谷井 所長</span>
+        <div class="avatar">谷</div>
+      </div>
+    </header>
+
+    <div class="cards">
+      <div class="card">
+        <div class="label">今月の請求予定額</div>
+        <div class="value">¥3,420,000</div>
+        <div class="delta up">▲ 前月比 +8.4%</div>
+      </div>
+      <div class="card">
+        <div class="label">顧問先数</div>
+        <div class="value">47社</div>
+        <div class="delta up">▲ 今月+2社 新規</div>
+      </div>
+      <div class="card">
+        <div class="label">所員平均稼働率</div>
+        <div class="value">78%</div>
+        <div class="delta up">▲ 目標75%超え</div>
+      </div>
+      <div class="card">
+        <div class="label">期日切迫案件</div>
+        <div class="value">5件</div>
+        <div class="delta down">▼ 7日以内</div>
+      </div>
+    </div>
+
+    <div class="panels">
+      <div class="panel">
+        <h2>所員別 稼働状況（今月） <a href="#">詳細 →</a></h2>
+        <table>
+          <thead>
+            <tr><th>所員</th><th>役職</th><th>工数</th><th>稼働率内訳（請求／事務／空）</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>谷井 所長</td>
+              <td><span class="badge shi">社労士</span></td>
+              <td>168h / 168h</td>
+              <td>
+                <div class="util-bar">
+                  <div class="util-chargable" style="width:72%">72% 請求</div>
+                  <div class="util-admin" style="width:22%">22% 事務</div>
+                  <div class="util-free" style="width:6%">6%</div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>佐藤 副所長</td>
+              <td><span class="badge shi">社労士</span></td>
+              <td>156h / 168h</td>
+              <td>
+                <div class="util-bar">
+                  <div class="util-chargable" style="width:85%">85%</div>
+                  <div class="util-admin" style="width:10%">10%</div>
+                  <div class="util-free" style="width:5%">5%</div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>鈴木 真理</td>
+              <td><span class="badge staff">事務</span></td>
+              <td>168h / 168h</td>
+              <td>
+                <div class="util-bar">
+                  <div class="util-chargable" style="width:60%">60%</div>
+                  <div class="util-admin" style="width:35%">35%</div>
+                  <div class="util-free" style="width:5%">5%</div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>田中 拓海</td>
+              <td><span class="badge staff">事務</span></td>
+              <td>148h / 168h</td>
+              <td>
+                <div class="util-bar">
+                  <div class="util-chargable" style="width:55%">55%</div>
+                  <div class="util-admin" style="width:30%">30%</div>
+                  <div class="util-free" style="width:15%">15%</div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>渡辺 美咲（パート）</td>
+              <td><span class="badge staff">補助</span></td>
+              <td>92h / 96h</td>
+              <td>
+                <div class="util-bar">
+                  <div class="util-chargable" style="width:48%">48%</div>
+                  <div class="util-admin" style="width:42%">42%</div>
+                  <div class="util-free" style="width:10%">10%</div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="panel">
+        <h2>主要顧問先（売上TOP5） <a href="#">→</a></h2>
+        <table>
+          <tbody>
+            <tr><td><strong>株式会社○○運輸</strong><br><small style="color:#78716c">月額¥120k / 給与計算+労務</small></td><td><span class="badge done">継続</span></td></tr>
+            <tr><td><strong>医療法人△△クリニック</strong><br><small style="color:#78716c">月額¥80k / 就業規則改定中</small></td><td><span class="badge high">対応中</span></td></tr>
+            <tr><td><strong>株式会社□□製造</strong><br><small style="color:#78716c">月額¥150k / 36協定+助成金</small></td><td><span class="badge done">継続</span></td></tr>
+            <tr><td><strong>××建設株式会社</strong><br><small style="color:#78716c">月額¥95k / 算定基礎届対応中</small></td><td><span class="badge high">対応中</span></td></tr>
+            <tr><td><strong>株式会社◇◇</strong><br><small style="color:#78716c">月額¥65k / スポット相談</small></td><td><span class="badge done">継続</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>期日管理（直近2週間） <a href="#">カレンダー →</a></h2>
+      <div class="deadline-row urgent">
+        <strong>⚠ 算定基礎届 一括提出</strong>
+        <small>顧問先 全47社 ／ 期限: 2026/05/31（あと6日） ／ 担当: 佐藤・鈴木</small>
+      </div>
+      <div class="deadline-row urgent">
+        <strong>⚠ 月変届（株式会社○○運輸）</strong>
+        <small>期限: 2026/06/01（あと7日） ／ 担当: 谷井</small>
+      </div>
+      <div class="deadline-row warn">
+        <strong>労働保険年度更新</strong>
+        <small>期限: 2026/06/10（あと16日） ／ 顧問先 全社 ／ 担当: 全員</small>
+      </div>
+      <div class="deadline-row warn">
+        <strong>就業規則改定（医療法人△△）</strong>
+        <small>顧問先納品予定: 2026/06/05 ／ 担当: 谷井・田中</small>
+      </div>
+      <div class="deadline-row">
+        <strong>業務改善助成金 申請（××建設）</strong>
+        <small>受付開始: 2026/06/15 ／ 担当: 佐藤</small>
+      </div>
+    </div>
+
+    <footer>
+      士業ナビ v0.1 mock ｜ 社労士・税理士事務所特化テンプレ ｜ taniiseiya/hrms-ja
+    </footer>
+  </main>
+</div>
+</body>
+</html>

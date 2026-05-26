@@ -3,163 +3,144 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>勤怠ナビ ｜ 中小企業向け勤怠・シフト・人事システム</title>
+<title>勤怠ナビ ｜ 業種別デモ選択</title>
 <style>
   *{box-sizing:border-box;margin:0;padding:0;-webkit-font-smoothing:antialiased}
-  body{font-family:"Hiragino Sans","Yu Gothic UI","Meiryo",sans-serif;background:#f6f7f9;color:#1a1f36;font-size:14px;line-height:1.6}
-  .wrap{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
-  aside{background:#0f172a;color:#cbd5e1;padding:24px 0}
-  .logo{padding:0 24px 24px;border-bottom:1px solid #1e293b;font-weight:700;font-size:18px;color:#fff;letter-spacing:.02em}
-  .logo small{display:block;font-size:11px;font-weight:400;color:#64748b;margin-top:2px}
-  nav{padding:16px 0}
-  nav a{display:block;padding:10px 24px;color:#cbd5e1;text-decoration:none;font-size:13px;border-left:3px solid transparent}
-  nav a:hover{background:#1e293b;color:#fff}
-  nav a.active{background:#1e293b;color:#fff;border-left-color:#3b82f6}
-  nav .group{padding:16px 24px 6px;font-size:10px;color:#64748b;letter-spacing:.1em;text-transform:uppercase}
-  main{padding:24px 32px;overflow-x:hidden}
-  header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
-  h1{font-size:22px;font-weight:700;color:#0f172a}
-  .user{display:flex;align-items:center;gap:12px;font-size:13px}
-  .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#6366f1);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600}
-  .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
-  .card{background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:18px}
-  .card .label{color:#64748b;font-size:12px;margin-bottom:6px}
-  .card .value{font-size:24px;font-weight:700;color:#0f172a}
-  .card .delta{font-size:11px;margin-top:4px}
-  .delta.up{color:#059669}.delta.down{color:#dc2626}
-  .panels{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:24px}
-  .panel{background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:20px}
-  .panel h2{font-size:14px;font-weight:600;margin-bottom:16px;color:#0f172a;display:flex;justify-content:space-between;align-items:center}
-  .panel h2 a{font-size:11px;color:#3b82f6;text-decoration:none;font-weight:400}
-  table{width:100%;border-collapse:collapse;font-size:13px}
-  th{text-align:left;color:#64748b;font-weight:500;font-size:11px;padding:8px 8px 8px 0;border-bottom:1px solid #e2e8f0;text-transform:uppercase;letter-spacing:.05em}
-  td{padding:10px 8px 10px 0;border-bottom:1px solid #f1f5f9}
-  tr:last-child td{border-bottom:none}
-  .badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:500}
-  .badge.ok{background:#dcfce7;color:#166534}
-  .badge.late{background:#fef3c7;color:#92400e}
-  .badge.off{background:#fee2e2;color:#991b1b}
-  .badge.pending{background:#dbeafe;color:#1e40af}
-  .shift-grid{display:grid;grid-template-columns:120px repeat(7,1fr);gap:1px;background:#e2e8f0;border:1px solid #e2e8f0;border-radius:6px;overflow:hidden;font-size:11px}
-  .shift-grid > div{background:#fff;padding:8px;text-align:center}
-  .shift-grid .hd{background:#f8fafc;font-weight:600;color:#475569}
-  .shift-grid .name{background:#f8fafc;text-align:left;font-weight:500;color:#0f172a}
-  .sh{background:#eff6ff;color:#1e40af;font-weight:500}
-  .sh-night{background:#1e293b;color:#fff}
-  .sh-off{color:#cbd5e1}
-  .note{background:#fef3c7;color:#92400e;padding:10px 14px;border-radius:6px;font-size:12px;margin-bottom:16px;border-left:3px solid #f59e0b}
-  footer{margin-top:32px;padding-top:16px;border-top:1px solid #e2e8f0;color:#94a3b8;font-size:11px;text-align:center}
-  .mock-banner{position:fixed;top:0;left:0;right:0;background:#1e293b;color:#fbbf24;text-align:center;padding:6px;font-size:11px;z-index:100;letter-spacing:.05em}
-  .wrap{padding-top:30px}
+  body{font-family:"Hiragino Sans","Yu Gothic UI","Meiryo",sans-serif;background:linear-gradient(135deg,#f8fafc 0%,#e2e8f0 100%);color:#0f172a;min-height:100vh;font-size:14px;line-height:1.6}
+  .container{max-width:1100px;margin:0 auto;padding:48px 24px}
+  header{text-align:center;margin-bottom:48px}
+  h1{font-size:36px;font-weight:800;color:#0f172a;margin-bottom:12px;letter-spacing:-.02em}
+  .subtitle{font-size:15px;color:#64748b;max-width:600px;margin:0 auto}
+  .tag{display:inline-block;background:#1e293b;color:#fbbf24;font-size:11px;padding:4px 10px;border-radius:4px;letter-spacing:.05em;margin-bottom:16px}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-bottom:48px}
+  .industry{background:#fff;border-radius:12px;overflow:hidden;border:1px solid #e2e8f0;transition:transform .15s,box-shadow .15s;text-decoration:none;color:inherit;display:block}
+  .industry:hover{transform:translateY(-2px);box-shadow:0 12px 32px -8px rgba(0,0,0,.12)}
+  .industry-header{padding:24px;color:#fff;position:relative;overflow:hidden}
+  .industry-header h2{font-size:22px;font-weight:700;margin-bottom:6px;position:relative;z-index:1}
+  .industry-header p{font-size:13px;opacity:.9;position:relative;z-index:1}
+  .icon{position:absolute;right:20px;top:50%;transform:translateY(-50%);font-size:64px;opacity:.2;z-index:0}
+  .logistics .industry-header{background:linear-gradient(135deg,#0f172a,#1e40af)}
+  .restaurant .industry-header{background:linear-gradient(135deg,#3d1f0d,#dc2626)}
+  .caregiving .industry-header{background:linear-gradient(135deg,#064e3b,#0891b2)}
+  .professional .industry-header{background:linear-gradient(135deg,#1c1917,#78716c)}
+  .industry-body{padding:20px 24px}
+  .features{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+  .feature{background:#f1f5f9;color:#475569;font-size:11px;padding:4px 10px;border-radius:12px}
+  .price{display:flex;justify-content:space-between;align-items:center;padding-top:12px;border-top:1px solid #f1f5f9;font-size:12px}
+  .price .amount{font-weight:600;color:#0f172a}
+  .cta{display:inline-block;background:#3b82f6;color:#fff;padding:6px 14px;border-radius:6px;font-size:12px;font-weight:500}
+  .info{background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:24px;font-size:13px;color:#475569}
+  .info h3{font-size:14px;color:#0f172a;margin-bottom:12px}
+  .info ul{margin-left:20px}
+  .info li{margin-bottom:4px}
+  .info code{background:#f1f5f9;padding:2px 6px;border-radius:3px;font-size:12px;color:#dc2626}
+  footer{text-align:center;color:#94a3b8;font-size:11px;margin-top:32px}
+  footer a{color:#64748b;text-decoration:none}
 </style>
 </head>
 <body>
-<div class="mock-banner">⚠ これは営業デモ用モック画面です ｜ 本番は Frappe HRMS をベースに構築</div>
-<div class="wrap">
-  <aside>
-    <div class="logo">勤怠ナビ<small>HRMS for Japan SMB</small></div>
-    <nav>
-      <div class="group">メイン</div>
-      <a href="#" class="active">📊 ダッシュボード</a>
-      <a href="#">⏰ 勤怠管理</a>
-      <a href="#">📅 シフト作成</a>
-      <a href="#">🏖 休暇申請</a>
-      <div class="group">人事</div>
-      <a href="#">👥 従業員</a>
-      <a href="#">💴 給与計算</a>
-      <a href="#">📈 評価</a>
-      <a href="#">📝 入退社</a>
-      <div class="group">設定</div>
-      <a href="#">⚙ 会社設定</a>
-      <a href="#">🇯🇵 祝日カレンダー</a>
-    </nav>
-  </aside>
-  <main>
-    <header>
-      <h1>ダッシュボード</h1>
-      <div class="user">
-        <span>谷井 誠也（管理者）</span>
-        <div class="avatar">谷</div>
-      </div>
-    </header>
+<div class="container">
+  <header>
+    <span class="tag">⚠ 営業デモ用モック画面</span>
+    <h1>勤怠ナビ／業種別デモ</h1>
+    <p class="subtitle">中小企業向けに Frappe HRMS をベースに業種特化テンプレを構築。顧客にそのまま見せられるダッシュボードデモ集。</p>
+  </header>
 
-    <div class="note">本日 2026年5月25日（月）— 出勤予定 12名／未打刻 2名／有給申請 1件 承認待ち</div>
+  <div class="grid">
+    <a href="logistics.html" class="industry logistics">
+      <div class="industry-header">
+        <span class="icon">🚚</span>
+        <h2>軽貨物・運送業</h2>
+        <p>ドライバー10〜30名規模の運送会社向け</p>
+      </div>
+      <div class="industry-body">
+        <div class="features">
+          <span class="feature">早番/中番/夜勤</span>
+          <span class="feature">車両連携</span>
+          <span class="feature">配送1〜3課</span>
+          <span class="feature">深夜割増</span>
+        </div>
+        <div class="price">
+          <span>想定単価: <strong class="amount">初期20万 + 月3万</strong></span>
+          <span class="cta">デモを開く →</span>
+        </div>
+      </div>
+    </a>
 
-    <div class="cards">
-      <div class="card">
-        <div class="label">本日の出勤</div>
-        <div class="value">10 / 12</div>
-        <div class="delta up">▲ 83.3% 出勤率</div>
+    <a href="restaurant.html" class="industry restaurant">
+      <div class="industry-header">
+        <span class="icon">🍴</span>
+        <h2>飲食チェーン</h2>
+        <p>3〜10店舗の居酒屋・カフェ・レストラン</p>
       </div>
-      <div class="card">
-        <div class="label">今月の残業時間</div>
-        <div class="value">142.5h</div>
-        <div class="delta down">▼ 前月比 -12%</div>
+      <div class="industry-body">
+        <div class="features">
+          <span class="feature">ホール/キッチン</span>
+          <span class="feature">バイト管理</span>
+          <span class="feature">FL率連動</span>
+          <span class="feature">深夜帯対応</span>
+        </div>
+        <div class="price">
+          <span>想定単価: <strong class="amount">初期30万 + 月4万</strong></span>
+          <span class="cta">デモを開く →</span>
+        </div>
       </div>
-      <div class="card">
-        <div class="label">有給取得率</div>
-        <div class="value">68%</div>
-        <div class="delta up">▲ 目標 60% 達成</div>
-      </div>
-      <div class="card">
-        <div class="label">人件費（今月）</div>
-        <div class="value">¥4,820,000</div>
-        <div class="delta down">▼ 予算内 -3.4%</div>
-      </div>
-    </div>
+    </a>
 
-    <div class="panels">
-      <div class="panel">
-        <h2>本日の打刻状況 <a href="#">すべて見る →</a></h2>
-        <table>
-          <thead>
-            <tr><th>従業員</th><th>部署</th><th>出勤</th><th>退勤</th><th>状態</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>佐藤 健太</td><td>配送1課</td><td>08:55</td><td>—</td><td><span class="badge ok">出勤中</span></td></tr>
-            <tr><td>鈴木 美咲</td><td>事務</td><td>09:02</td><td>—</td><td><span class="badge late">遅刻 2分</span></td></tr>
-            <tr><td>高橋 一郎</td><td>配送2課</td><td>06:30</td><td>15:45</td><td><span class="badge ok">退勤済</span></td></tr>
-            <tr><td>田中 太郎</td><td>配送1課</td><td>—</td><td>—</td><td><span class="badge off">有給</span></td></tr>
-            <tr><td>渡辺 由美</td><td>経理</td><td>09:00</td><td>—</td><td><span class="badge ok">出勤中</span></td></tr>
-            <tr><td>伊藤 拓海</td><td>配送3課</td><td>—</td><td>—</td><td><span class="badge late">未打刻</span></td></tr>
-            <tr><td>山本 桜</td><td>営業</td><td>08:48</td><td>—</td><td><span class="badge ok">出勤中</span></td></tr>
-          </tbody>
-        </table>
+    <a href="caregiving.html" class="industry caregiving">
+      <div class="industry-header">
+        <span class="icon">🏥</span>
+        <h2>介護事業所</h2>
+        <p>特養・デイサービス・グループホーム</p>
       </div>
-
-      <div class="panel">
-        <h2>承認待ち <a href="#">すべて →</a></h2>
-        <table>
-          <tbody>
-            <tr><td><strong>有給申請</strong><br><small style="color:#64748b">佐藤健太 ／ 6/3-6/5</small></td><td><span class="badge pending">承認待</span></td></tr>
-            <tr><td><strong>残業申請</strong><br><small style="color:#64748b">鈴木美咲 ／ 5/24 3h</small></td><td><span class="badge pending">承認待</span></td></tr>
-            <tr><td><strong>シフト変更</strong><br><small style="color:#64748b">高橋一郎 ／ 5/28</small></td><td><span class="badge pending">承認待</span></td></tr>
-            <tr><td><strong>経費精算</strong><br><small style="color:#64748b">山本桜 ／ ¥8,420</small></td><td><span class="badge pending">承認待</span></td></tr>
-          </tbody>
-        </table>
+      <div class="industry-body">
+        <div class="features">
+          <span class="feature">配置基準3:1</span>
+          <span class="feature">処遇改善加算</span>
+          <span class="feature">資格管理</span>
+          <span class="feature">夜勤明け休</span>
+        </div>
+        <div class="price">
+          <span>想定単価: <strong class="amount">初期40万 + 月5万</strong></span>
+          <span class="cta">デモを開く →</span>
+        </div>
       </div>
-    </div>
+    </a>
 
-    <div class="panel">
-      <h2>今週のシフト表（配送1課） <a href="#">編集 →</a></h2>
-      <div class="shift-grid">
-        <div class="hd"></div>
-        <div class="hd">月 5/25</div><div class="hd">火 5/26</div><div class="hd">水 5/27</div><div class="hd">木 5/28</div><div class="hd">金 5/29</div><div class="hd" style="color:#3b82f6">土 5/30</div><div class="hd" style="color:#dc2626">日 5/31</div>
-        <div class="name">佐藤 健太</div>
-        <div class="sh">早番 6-15</div><div class="sh">早番 6-15</div><div class="sh-off">休</div><div class="sh">中番 9-18</div><div class="sh">中番 9-18</div><div class="sh-night">夜 22-7</div><div class="sh-off">休</div>
-        <div class="name">田中 太郎</div>
-        <div class="sh-off">有給</div><div class="sh">中番 9-18</div><div class="sh">中番 9-18</div><div class="sh">早番 6-15</div><div class="sh">早番 6-15</div><div class="sh-off">休</div><div class="sh-night">夜 22-7</div>
-        <div class="name">伊藤 拓海</div>
-        <div class="sh-night">夜 22-7</div><div class="sh-off">明</div><div class="sh">中番 9-18</div><div class="sh">中番 9-18</div><div class="sh-off">休</div><div class="sh">早番 6-15</div><div class="sh">早番 6-15</div>
-        <div class="name">山田 健</div>
-        <div class="sh">中番 9-18</div><div class="sh-off">休</div><div class="sh">早番 6-15</div><div class="sh-night">夜 22-7</div><div class="sh-off">明</div><div class="sh">中番 9-18</div><div class="sh">中番 9-18</div>
+    <a href="professional.html" class="industry professional">
+      <div class="industry-header">
+        <span class="icon">⚖</span>
+        <h2>士業事務所</h2>
+        <p>社労士・税理士・行政書士事務所</p>
       </div>
-    </div>
+      <div class="industry-body">
+        <div class="features">
+          <span class="feature">タイムチャージ</span>
+          <span class="feature">顧問先管理</span>
+          <span class="feature">期日カレンダー</span>
+          <span class="feature">稼働率分析</span>
+        </div>
+        <div class="price">
+          <span>想定単価: <strong class="amount">初期25万 + 月3.5万</strong></span>
+          <span class="cta">デモを開く →</span>
+        </div>
+      </div>
+    </a>
+  </div>
 
-    <footer>
-      勤怠ナビ v0.1 mock ｜ Powered by Frappe HRMS (GPL v3) ｜ ローカライズ: taniiseiya/hrms-ja
-    </footer>
-  </main>
+  <div class="info">
+    <h3>📖 提案時の使い方</h3>
+    <ul>
+      <li>顧客の業種に合わせたタブを開いて画面共有 or スクショで提案書に貼り付け</li>
+      <li>「これをお客様の会社名・店舗名・スタッフ名に置き換えた本番版を構築します」と提案</li>
+      <li>本番化は Frappe HRMS (GPL v3) ベース + 業種別カスタマイズで構築</li>
+      <li>ローカル起動: <code>python3 -m http.server 8080 --directory mock</code></li>
+    </ul>
+  </div>
+
+  <footer>
+    勤怠ナビ v0.2 ｜ 4業種テンプレ ｜ <a href="https://github.com/taniiseiya/hrms-ja">taniiseiya/hrms-ja</a>
+  </footer>
 </div>
 </body>
 </html>

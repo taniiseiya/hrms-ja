@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ケアナビ ｜ 介護事業所向け勤怠・シフト・人事システム</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-font-smoothing:antialiased}
+  body{font-family:"Hiragino Sans","Yu Gothic UI","Meiryo",sans-serif;background:#f0f9f4;color:#0f2419;font-size:14px;line-height:1.6}
+  .wrap{display:grid;grid-template-columns:240px 1fr;min-height:100vh;padding-top:30px}
+  aside{background:#064e3b;color:#bbf7d0;padding:24px 0}
+  .logo{padding:0 24px 24px;border-bottom:1px solid #065f46;font-weight:700;font-size:18px;color:#fff;letter-spacing:.02em}
+  .logo small{display:block;font-size:11px;font-weight:400;color:#6ee7b7;margin-top:2px}
+  nav{padding:16px 0}
+  nav a{display:block;padding:10px 24px;color:#bbf7d0;text-decoration:none;font-size:13px;border-left:3px solid transparent}
+  nav a:hover{background:#065f46;color:#fff}
+  nav a.active{background:#065f46;color:#fff;border-left-color:#34d399}
+  nav .group{padding:16px 24px 6px;font-size:10px;color:#6ee7b7;letter-spacing:.1em;text-transform:uppercase}
+  main{padding:24px 32px;overflow-x:hidden}
+  header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
+  h1{font-size:22px;font-weight:700;color:#0f2419}
+  .user{display:flex;align-items:center;gap:12px;font-size:13px}
+  .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#10b981,#0891b2);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600}
+  .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+  .card{background:#fff;border:1px solid #d1fae5;border-radius:8px;padding:18px}
+  .card .label{color:#047857;font-size:12px;margin-bottom:6px}
+  .card .value{font-size:24px;font-weight:700;color:#0f2419}
+  .card .delta{font-size:11px;margin-top:4px}
+  .delta.up{color:#059669}.delta.down{color:#dc2626}
+  .panels{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:24px}
+  .panel{background:#fff;border:1px solid #d1fae5;border-radius:8px;padding:20px}
+  .panel h2{font-size:14px;font-weight:600;margin-bottom:16px;color:#0f2419;display:flex;justify-content:space-between;align-items:center}
+  .panel h2 a{font-size:11px;color:#059669;text-decoration:none;font-weight:400}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{text-align:left;color:#047857;font-weight:500;font-size:11px;padding:8px 8px 8px 0;border-bottom:1px solid #d1fae5;text-transform:uppercase;letter-spacing:.05em}
+  td{padding:10px 8px 10px 0;border-bottom:1px solid #ecfdf5}
+  tr:last-child td{border-bottom:none}
+  .badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:500}
+  .badge.cert-kfk{background:#dbeafe;color:#1e40af}
+  .badge.cert-hatsu{background:#e0e7ff;color:#3730a3}
+  .badge.cert-jitsu{background:#fef3c7;color:#92400e}
+  .badge.ok{background:#dcfce7;color:#166534}
+  .badge.warn{background:#fef3c7;color:#92400e}
+  .badge.alert{background:#fee2e2;color:#991b1b}
+  .shift-grid{display:grid;grid-template-columns:160px repeat(7,1fr);gap:1px;background:#d1fae5;border:1px solid #d1fae5;border-radius:6px;overflow:hidden;font-size:11px}
+  .shift-grid > div{background:#fff;padding:8px;text-align:center}
+  .shift-grid .hd{background:#ecfdf5;font-weight:600;color:#047857}
+  .shift-grid .name{background:#ecfdf5;text-align:left;font-weight:500;color:#0f2419;font-size:10px}
+  .sh-day{background:#dcfce7;color:#166534;font-weight:500}
+  .sh-late{background:#fef3c7;color:#854d0e;font-weight:500}
+  .sh-night{background:#064e3b;color:#fff;font-weight:500}
+  .sh-ake{background:#fee2e2;color:#991b1b;font-weight:500}
+  .sh-off{color:#cbd5e1}
+  .note{background:#fef3c7;color:#92400e;padding:10px 14px;border-radius:6px;font-size:12px;margin-bottom:16px;border-left:3px solid #f59e0b}
+  .config-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px;font-size:12px}
+  .config-row > div{background:#ecfdf5;padding:10px;border-radius:6px;border-left:3px solid #059669}
+  .config-row strong{color:#064e3b;display:block;margin-bottom:4px;font-size:11px}
+  footer{margin-top:32px;padding-top:16px;border-top:1px solid #d1fae5;color:#6ee7b7;font-size:11px;text-align:center}
+  .mock-banner{position:fixed;top:0;left:0;right:0;background:#064e3b;color:#fbbf24;text-align:center;padding:6px;font-size:11px;z-index:100;letter-spacing:.05em}
+</style>
+</head>
+<body>
+<div class="mock-banner">⚠ 営業デモ用モック ｜ 介護事業所版 ｜ <a href="index.html" style="color:#fbbf24">業種選択へ戻る</a></div>
+<div class="wrap">
+  <aside>
+    <div class="logo">ケアナビ<small>For Care Facility</small></div>
+    <nav>
+      <div class="group">運営</div>
+      <a href="#" class="active">🏥 施設ダッシュボード</a>
+      <a href="#">⏰ 打刻・勤怠</a>
+      <a href="#">📅 シフト作成（配置基準対応）</a>
+      <a href="#">🛌 夜勤管理</a>
+      <div class="group">スタッフ</div>
+      <a href="#">👥 職員一覧</a>
+      <a href="#">🎓 資格・研修管理</a>
+      <a href="#">💴 給与計算（処遇改善加算）</a>
+      <div class="group">ケア</div>
+      <a href="#">👴 利用者管理</a>
+      <a href="#">📝 ケア記録連携</a>
+      <a href="#">⚙ 加算設定</a>
+    </nav>
+  </aside>
+  <main>
+    <header>
+      <h1>特養 さくらの郷 ／ 本日の施設状況</h1>
+      <div class="user">
+        <span>山下 施設長</span>
+        <div class="avatar">山</div>
+      </div>
+    </header>
+
+    <div class="note">2026年5月25日（月） — 利用者48名／日勤8名・遅番4名・夜勤2名／<strong>配置基準クリア（3:1）</strong></div>
+
+    <div class="cards">
+      <div class="card">
+        <div class="label">利用者数</div>
+        <div class="value">48名</div>
+        <div class="delta up">▲ 定員50名 稼働率96%</div>
+      </div>
+      <div class="card">
+        <div class="label">本日の配置職員</div>
+        <div class="value">14名</div>
+        <div class="delta up">▲ 基準8名 +6名</div>
+      </div>
+      <div class="card">
+        <div class="label">夜勤明け休</div>
+        <div class="value">2名</div>
+        <div class="delta up">▲ 明け休 100% 取得</div>
+      </div>
+      <div class="card">
+        <div class="label">介護福祉士比率</div>
+        <div class="value">62.5%</div>
+        <div class="delta up">▲ 加算Ⅰ要件達成 (50%)</div>
+      </div>
+    </div>
+
+    <div class="config-row">
+      <div><strong>処遇改善加算</strong>Ⅰ (月額平均 +¥37,000/人)</div>
+      <div><strong>特定処遇改善加算</strong>Ⅰ (経験10年以上 月+¥80k)</div>
+      <div><strong>夜勤専従手当</strong>1回 ¥5,000 ＋ 深夜割増</div>
+    </div>
+
+    <div class="panels">
+      <div class="panel">
+        <h2>本日の勤務職員 <a href="#">すべて →</a></h2>
+        <table>
+          <thead>
+            <tr><th>職員</th><th>資格</th><th>勤務帯</th><th>打刻</th><th>状態</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>山下 施設長</td><td><span class="badge cert-kfk">介護福祉士</span></td><td>日勤</td><td>08:30</td><td><span class="badge ok">勤務中</span></td></tr>
+            <tr><td>佐藤 みどり</td><td><span class="badge cert-kfk">介護福祉士</span></td><td>日勤</td><td>08:45</td><td><span class="badge ok">勤務中</span></td></tr>
+            <tr><td>鈴木 健一</td><td><span class="badge cert-kfk">介護福祉士</span></td><td>遅番</td><td>13:00</td><td><span class="badge ok">勤務中</span></td></tr>
+            <tr><td>田中 由香</td><td><span class="badge cert-hatsu">初任者</span></td><td>日勤</td><td>09:00</td><td><span class="badge ok">勤務中</span></td></tr>
+            <tr><td>渡辺 真理子</td><td><span class="badge cert-kfk">介護福祉士</span></td><td>夜勤</td><td>16:30</td><td><span class="badge warn">夜勤入り</span></td></tr>
+            <tr><td>伊藤 翔太</td><td><span class="badge cert-jitsu">実務者</span></td><td>夜勤</td><td>16:45</td><td><span class="badge warn">夜勤入り</span></td></tr>
+            <tr><td>高橋 美奈</td><td><span class="badge cert-kfk">介護福祉士</span></td><td>明け</td><td>—</td><td><span class="badge alert">夜勤明け休</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="panel">
+        <h2>資格・期限管理 <a href="#">→</a></h2>
+        <table>
+          <tbody>
+            <tr><td><strong>介護福祉士</strong><br><small style="color:#047857">15名 / 全24名</small></td><td><span class="badge ok">62.5%</span></td></tr>
+            <tr><td><strong>実務者研修</strong><br><small style="color:#047857">3名</small></td><td><span class="badge ok">完了</span></td></tr>
+            <tr><td><strong>初任者研修</strong><br><small style="color:#047857">6名</small></td><td><span class="badge ok">完了</span></td></tr>
+            <tr><td><strong>喀痰吸引研修</strong><br><small style="color:#047857">高橋 / 期限まで30日</small></td><td><span class="badge warn">要更新</span></td></tr>
+            <tr><td><strong>認知症ケア</strong><br><small style="color:#047857">伊藤 / 受講予定 6月</small></td><td><span class="badge warn">予定</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>今週のシフト表（特養ユニット1） <a href="#">編集 →</a></h2>
+      <div class="shift-grid">
+        <div class="hd"></div>
+        <div class="hd">月 5/25</div><div class="hd">火 5/26</div><div class="hd">水 5/27</div><div class="hd">木 5/28</div><div class="hd">金 5/29</div><div class="hd" style="color:#3b82f6">土 5/30</div><div class="hd" style="color:#dc2626">日 5/31</div>
+        <div class="name">山下 施設長（介福）</div>
+        <div class="sh-day">日 8:30-17:30</div><div class="sh-day">日 8:30-17:30</div><div class="sh-day">日 8:30-17:30</div><div class="sh-off">公休</div><div class="sh-day">日 8:30-17:30</div><div class="sh-off">公休</div><div class="sh-off">公休</div>
+        <div class="name">佐藤 みどり（介福）</div>
+        <div class="sh-day">日 8:30-17:30</div><div class="sh-late">遅 11-20</div><div class="sh-off">公休</div><div class="sh-day">日 8:30-17:30</div><div class="sh-late">遅 11-20</div><div class="sh-day">日 8:30-17:30</div><div class="sh-off">公休</div>
+        <div class="name">渡辺 真理子（介福）</div>
+        <div class="sh-night">夜 16:30-翌9:30</div><div class="sh-ake">明休</div><div class="sh-off">公休</div><div class="sh-day">日 8:30-17:30</div><div class="sh-night">夜 16:30-翌9:30</div><div class="sh-ake">明休</div><div class="sh-off">公休</div>
+        <div class="name">伊藤 翔太（実務）</div>
+        <div class="sh-night">夜 16:30-翌9:30</div><div class="sh-ake">明休</div><div class="sh-late">遅 11-20</div><div class="sh-off">公休</div><div class="sh-day">日 8:30-17:30</div><div class="sh-night">夜 16:30-翌9:30</div><div class="sh-ake">明休</div>
+        <div class="name">高橋 美奈（介福）</div>
+        <div class="sh-ake">明休</div><div class="sh-day">日 8:30-17:30</div><div class="sh-day">日 8:30-17:30</div><div class="sh-late">遅 11-20</div><div class="sh-off">公休</div><div class="sh-day">日 8:30-17:30</div><div class="sh-day">日 8:30-17:30</div>
+      </div>
+    </div>
+
+    <footer>
+      ケアナビ v0.1 mock ｜ 介護事業所特化テンプレ ｜ taniiseiya/hrms-ja
+    </footer>
+  </main>
+</div>
+</body>
+</html>

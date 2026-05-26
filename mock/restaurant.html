@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>店舗ナビ ｜ 飲食チェーン向け勤怠・シフト・人事システム</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-font-smoothing:antialiased}
+  body{font-family:"Hiragino Sans","Yu Gothic UI","Meiryo",sans-serif;background:#fdf8f3;color:#2a1f14;font-size:14px;line-height:1.6}
+  .wrap{display:grid;grid-template-columns:240px 1fr;min-height:100vh;padding-top:30px}
+  aside{background:#3d1f0d;color:#f5dcc4;padding:24px 0}
+  .logo{padding:0 24px 24px;border-bottom:1px solid #5a3520;font-weight:700;font-size:18px;color:#fff;letter-spacing:.02em}
+  .logo small{display:block;font-size:11px;font-weight:400;color:#a07555;margin-top:2px}
+  nav{padding:16px 0}
+  nav a{display:block;padding:10px 24px;color:#f5dcc4;text-decoration:none;font-size:13px;border-left:3px solid transparent}
+  nav a:hover{background:#5a3520;color:#fff}
+  nav a.active{background:#5a3520;color:#fff;border-left-color:#f59e0b}
+  nav .group{padding:16px 24px 6px;font-size:10px;color:#a07555;letter-spacing:.1em;text-transform:uppercase}
+  main{padding:24px 32px;overflow-x:hidden}
+  header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
+  h1{font-size:22px;font-weight:700;color:#2a1f14}
+  .user{display:flex;align-items:center;gap:12px;font-size:13px}
+  .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#f59e0b,#dc2626);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600}
+  .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+  .card{background:#fff;border:1px solid #e8d5b8;border-radius:8px;padding:18px}
+  .card .label{color:#8a6a4a;font-size:12px;margin-bottom:6px}
+  .card .value{font-size:24px;font-weight:700;color:#2a1f14}
+  .card .delta{font-size:11px;margin-top:4px}
+  .delta.up{color:#059669}.delta.down{color:#dc2626}
+  .panels{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:24px}
+  .panel{background:#fff;border:1px solid #e8d5b8;border-radius:8px;padding:20px}
+  .panel h2{font-size:14px;font-weight:600;margin-bottom:16px;color:#2a1f14;display:flex;justify-content:space-between;align-items:center}
+  .panel h2 a{font-size:11px;color:#dc2626;text-decoration:none;font-weight:400}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{text-align:left;color:#8a6a4a;font-weight:500;font-size:11px;padding:8px 8px 8px 0;border-bottom:1px solid #e8d5b8;text-transform:uppercase;letter-spacing:.05em}
+  td{padding:10px 8px 10px 0;border-bottom:1px solid #faf0e0}
+  tr:last-child td{border-bottom:none}
+  .badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:500}
+  .badge.hall{background:#fed7aa;color:#9a3412}
+  .badge.kitchen{background:#fef3c7;color:#854d0e}
+  .badge.ok{background:#dcfce7;color:#166534}
+  .badge.late{background:#fef3c7;color:#92400e}
+  .badge.off{background:#fee2e2;color:#991b1b}
+  .badge.pending{background:#dbeafe;color:#1e40af}
+  .shift-grid{display:grid;grid-template-columns:140px repeat(7,1fr);gap:1px;background:#e8d5b8;border:1px solid #e8d5b8;border-radius:6px;overflow:hidden;font-size:11px}
+  .shift-grid > div{background:#fff;padding:8px;text-align:center}
+  .shift-grid .hd{background:#faf0e0;font-weight:600;color:#5a3520}
+  .shift-grid .name{background:#faf0e0;text-align:left;font-weight:500;color:#2a1f14}
+  .sh{background:#fef3c7;color:#854d0e;font-weight:500}
+  .sh-mid{background:#fed7aa;color:#9a3412;font-weight:500}
+  .sh-close{background:#3d1f0d;color:#fff;font-weight:500}
+  .sh-off{color:#cbd5e1}
+  .note{background:#fed7aa;color:#9a3412;padding:10px 14px;border-radius:6px;font-size:12px;margin-bottom:16px;border-left:3px solid #ea580c}
+  footer{margin-top:32px;padding-top:16px;border-top:1px solid #e8d5b8;color:#a07555;font-size:11px;text-align:center}
+  .mock-banner{position:fixed;top:0;left:0;right:0;background:#3d1f0d;color:#fbbf24;text-align:center;padding:6px;font-size:11px;z-index:100;letter-spacing:.05em}
+</style>
+</head>
+<body>
+<div class="mock-banner">⚠ 営業デモ用モック ｜ 飲食チェーン版 ｜ <a href="index.html" style="color:#fbbf24">業種選択へ戻る</a></div>
+<div class="wrap">
+  <aside>
+    <div class="logo">店舗ナビ<small>For Restaurant Chain</small></div>
+    <nav>
+      <div class="group">店舗運営</div>
+      <a href="#" class="active">🏪 店舗ダッシュボード</a>
+      <a href="#">⏰ 打刻・勤怠</a>
+      <a href="#">📅 シフト作成</a>
+      <a href="#">🍱 まかない管理</a>
+      <div class="group">スタッフ</div>
+      <a href="#">👥 従業員・バイト</a>
+      <a href="#">💴 給与計算（深夜割増）</a>
+      <a href="#">🎓 研修・スキル</a>
+      <div class="group">経営</div>
+      <a href="#">📊 人件費分析</a>
+      <a href="#">🍴 店舗別売上連動</a>
+      <a href="#">⚙ 店舗設定</a>
+    </nav>
+  </aside>
+  <main>
+    <header>
+      <h1>新宿東口店 ／ 本日の店舗状況</h1>
+      <div class="user">
+        <span>鈴木 店長</span>
+        <div class="avatar">鈴</div>
+      </div>
+    </header>
+
+    <div class="note">2026年5月25日（月） 18:30 — ピーク時間帯／ホール3名・キッチン2名 稼働中／バイト1名 遅刻連絡あり</div>
+
+    <div class="cards">
+      <div class="card">
+        <div class="label">本日の出勤</div>
+        <div class="value">8 / 9</div>
+        <div class="delta down">▼ 山田（バイト）遅刻</div>
+      </div>
+      <div class="card">
+        <div class="label">本日の人件費</div>
+        <div class="value">¥68,420</div>
+        <div class="delta up">▲ 売上¥412,000 / FL率 16.6%</div>
+      </div>
+      <div class="card">
+        <div class="label">今月の深夜割増</div>
+        <div class="value">¥84,200</div>
+        <div class="delta down">▼ 前月比 -8% 改善</div>
+      </div>
+      <div class="card">
+        <div class="label">バイト時給平均</div>
+        <div class="value">¥1,180</div>
+        <div class="delta up">▲ 都内最低賃金+¥67</div>
+      </div>
+    </div>
+
+    <div class="panels">
+      <div class="panel">
+        <h2>本日の稼働スタッフ <a href="#">すべて →</a></h2>
+        <table>
+          <thead>
+            <tr><th>スタッフ</th><th>ポジション</th><th>出勤</th><th>シフト</th><th>状態</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>鈴木 店長</td><td><span class="badge hall">ホール</span></td><td>10:00</td><td>通し</td><td><span class="badge ok">稼働中</span></td></tr>
+            <tr><td>田中 料理長</td><td><span class="badge kitchen">キッチン</span></td><td>15:00</td><td>中番</td><td><span class="badge ok">稼働中</span></td></tr>
+            <tr><td>佐藤 美咲（社員）</td><td><span class="badge hall">ホール</span></td><td>17:00</td><td>遅番</td><td><span class="badge ok">稼働中</span></td></tr>
+            <tr><td>山田 拓也（バイト・大学生）</td><td><span class="badge hall">ホール</span></td><td>—</td><td>17:00予定</td><td><span class="badge late">遅刻連絡 30分</span></td></tr>
+            <tr><td>伊藤 凛（バイト・専門生）</td><td><span class="badge kitchen">キッチン</span></td><td>16:00</td><td>遅番</td><td><span class="badge ok">稼働中</span></td></tr>
+            <tr><td>渡辺 健（バイト）</td><td><span class="badge hall">ホール</span></td><td>18:00</td><td>夜のみ</td><td><span class="badge ok">稼働中</span></td></tr>
+            <tr><td>高橋 真央（社員）</td><td><span class="badge kitchen">キッチン</span></td><td>—</td><td>—</td><td><span class="badge off">公休</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="panel">
+        <h2>店舗別状況 <a href="#">詳細 →</a></h2>
+        <table>
+          <tbody>
+            <tr><td><strong>新宿東口店</strong><br><small style="color:#8a6a4a">¥412k / 8名稼働</small></td><td><span class="badge ok">順調</span></td></tr>
+            <tr><td><strong>渋谷センター街店</strong><br><small style="color:#8a6a4a">¥385k / 7名稼働</small></td><td><span class="badge ok">順調</span></td></tr>
+            <tr><td><strong>池袋西口店</strong><br><small style="color:#8a6a4a">¥298k / 6名稼働</small></td><td><span class="badge late">人手不足</span></td></tr>
+            <tr><td><strong>上野駅前店</strong><br><small style="color:#8a6a4a">¥445k / 9名稼働</small></td><td><span class="badge ok">順調</span></td></tr>
+            <tr><td><strong>新橋本店</strong><br><small style="color:#8a6a4a">¥520k / 10名稼働</small></td><td><span class="badge ok">順調</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>今週のシフト表（新宿東口店） <a href="#">編集 →</a></h2>
+      <div class="shift-grid">
+        <div class="hd"></div>
+        <div class="hd">月 5/25</div><div class="hd">火 5/26</div><div class="hd">水 5/27</div><div class="hd">木 5/28</div><div class="hd">金 5/29</div><div class="hd" style="color:#3b82f6">土 5/30</div><div class="hd" style="color:#dc2626">日 5/31</div>
+        <div class="name">鈴木 店長</div>
+        <div class="sh-mid">通し 10-23</div><div class="sh-mid">通し 10-23</div><div class="sh-off">公休</div><div class="sh">早 10-18</div><div class="sh-mid">通し 10-23</div><div class="sh-mid">通し 10-23</div><div class="sh-off">公休</div>
+        <div class="name">田中 料理長</div>
+        <div class="sh-mid">中 15-24</div><div class="sh-mid">中 15-24</div><div class="sh-mid">中 15-24</div><div class="sh-off">公休</div><div class="sh-mid">中 15-24</div><div class="sh-mid">中 15-24</div><div class="sh-mid">中 15-24</div>
+        <div class="name">佐藤 美咲</div>
+        <div class="sh-close">遅 17-翌2</div><div class="sh-off">公休</div><div class="sh-close">遅 17-翌2</div><div class="sh-close">遅 17-翌2</div><div class="sh-close">遅 17-翌2</div><div class="sh-close">遅 17-翌2</div><div class="sh-off">公休</div>
+        <div class="name">山田 拓也（バイト）</div>
+        <div class="sh-close">17-22</div><div class="sh-off">学校</div><div class="sh-close">17-22</div><div class="sh-off">学校</div><div class="sh-close">17-翌1</div><div class="sh-close">17-翌1</div><div class="sh-off">テスト</div>
+        <div class="name">伊藤 凛（バイト）</div>
+        <div class="sh">16-21</div><div class="sh">16-21</div><div class="sh-off">学校</div><div class="sh">16-21</div><div class="sh-off">学校</div><div class="sh-close">16-翌1</div><div class="sh-close">16-翌1</div>
+      </div>
+    </div>
+
+    <footer>
+      店舗ナビ v0.1 mock ｜ 飲食チェーン特化テンプレ ｜ taniiseiya/hrms-ja
+    </footer>
+  </main>
+</div>
+</body>
+</html>
